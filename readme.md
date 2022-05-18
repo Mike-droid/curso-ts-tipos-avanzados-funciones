@@ -49,3 +49,119 @@ Es como un array pero con posiciones limitadas.
 Es mucho más preferible usar unknow que any en TS.
 
 ### Never type
+
+Se usa para funciones que nunca terminan.
+
+## Funciones
+
+### Parámetros opcionales y nullish-coalescing
+
+Cuando usamos parámetros opcionales, estos *obligatoriamente* deben ir al final.
+
+Y es mejor usar el operador 'nullish-coalescing' `??` para evitar errores que da `||`.
+
+```typescript
+export const createProduct = (
+  id: string | number,
+  isNew: boolean,
+  stock?: Number,
+) => {
+  return {
+    id,
+    isNew: isNew ?? true,
+    stock: stock ?? 10, //* valor por defecto
+  }
+}
+
+//! usar || puede dar problemas, es mejor usar ??
+
+const p1 = createProduct(123, true, 100)
+console.log(p1)
+
+const p2 = createProduct(124, true)
+console.log(p2)
+
+const p3 = createProduct(125, false, 0)
+console.log(p3)
+
+```
+
+### Parámetros por defecto
+
+```typescript
+export const createProduct = (
+  id: string | number,
+  isNew: boolean = true, //* valor por defecto
+  stock: Number = 10, //* valor por defecto
+) => {
+  return {
+    id,
+    isNew,
+    stock
+  }
+}
+
+const p1 = createProduct(123)
+console.log(p1)
+```
+
+### Parámetros rest
+
+```typescript
+import { User, ROLES } from "./01-enum"
+
+const currentUser: User = {
+  username: 'mike',
+  role: ROLES.CUSTOMER,
+}
+
+export const checkAdminRole = () => {
+  return currentUser.role === ROLES.ADMIN ? true : false
+}
+
+export const checkRole = (role1: string, role2: string) => {
+  return currentUser.role === role1 || currentUser.role === role2 ? true : false
+}
+
+//console.log(checkRole(ROLES.ADMIN, ROLES.SELLER))
+
+export const checkRoleV2 = (roles: string[]) => {
+  return roles.includes(currentUser.role) ? true : false
+}
+//console.log(checkRoleV2([ROLES.ADMIN, ROLES.SELLER]))
+
+export const checkRoleV3 = (...roles: string[]) => {
+  return roles.includes(currentUser.role) ? true : false
+}
+console.log(checkRoleV2([ROLES.ADMIN, ROLES.SELLER, ROLES.CUSTOMER])) //* parámetros infinitos
+
+```
+
+### Sobrecarga de funciones: el problema
+
+La sobrecarga solamente puede usarse con la palabra reservada `function`.
+
+El detalle es que no podemos usar métodos de la variable porque TS no sabe en qué momento nuestra variable es de algún tipo u otro.
+
+### ### Sobrecarga de funciones: la solución
+
+Buena práctica: si tu sobrecarga usa `unknown` o `any` deja esa sobrecarga para el final.
+
+```typescript
+//* Esta es la sobrecarga, le damos un tipado a nuestra función
+export function parseStr(input: string): string[];
+export function parseStr(input: string[]): string;
+export function parseStr(input: number): boolean; //* just for lol
+
+export function parseStr(input: unknown): unknown {
+  if (Array.isArray(input)) {
+    return input.join(""); //string
+  } else if (typeof input === "string") {
+    return input.split(""); //string[]
+  } else if (typeof input === "number") {
+    return true; //boolean
+  }
+}
+```
+
+[Type ORM](https://typeorm.io/) utiliza TS y sobrecarga de métodos.
