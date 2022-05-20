@@ -165,3 +165,88 @@ export function parseStr(input: unknown): unknown {
 ```
 
 [Type ORM](https://typeorm.io/) utiliza TS y sobrecarga de métodos.
+
+## Interfaces
+
+### Interfaces
+
+Si bien `type` e `interface` hacen casi lo mismo, `interface` puede verse como un conjunto de tipos, mientras que `type` se puede declarar en una sola línea.
+
+`interface` se puede extender, pero `type` no.
+
+```typescript
+type Sizes = 'S' | 'M' | 'L' | 'XL';
+
+interface Product {
+  id: string | number;
+  title: string;
+  createdAt: Date;
+  stock: number;
+  size: Sizes;
+}
+
+```
+
+### Estructuras complejas
+
+Ejemplo de estructuras más complejas:
+
+```typescript
+import { Product } from '../products/product.model';
+import { User } from '../users/user.model';
+
+export interface Order {
+  id: string | number;
+  createdAt: Date;
+  products: Product[];
+  user: User;
+}
+
+```
+
+### Extender interfaces
+
+Creamos un 'BaseModel':
+
+```typescript
+export interface BaseModel {
+  id: string | number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+```
+
+Y lo usamos con `extends` en los archivos que sean necesarios:
+
+```typescript
+import { BaseModel } from '../base.model';
+import { Category } from "../categories/category.model";
+
+export type Sizes = 'S' | 'M' | 'L' | 'XL';
+
+export interface Product extends BaseModel {
+  title: string;
+  stock: number;
+  size?: Sizes;
+  category: Category;
+}
+
+```
+
+### Propiedades de solo lectura
+
+Podemos hacer que algunas propiedades no puedan ser alteradas:
+
+```typescript
+export interface BaseModel {
+  readonly id: string | number; //* la BBDD es la que debe asignar el ID, no una persona
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+```
+
+## Proyecto
+
+### CRUD
