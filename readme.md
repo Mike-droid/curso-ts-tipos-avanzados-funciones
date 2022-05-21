@@ -1,4 +1,4 @@
-# Cursto de TypeScript: Tipos Avanzados y Funciones
+# Curso de TypeScript: Tipos Avanzados y Funciones
 
 ## Introducción
 
@@ -168,7 +168,7 @@ export function parseStr(input: unknown): unknown {
 
 ## Interfaces
 
-### Interfaces
+### Interfaces | clase
 
 Si bien `type` e `interface` hacen casi lo mismo, `interface` puede verse como un conjunto de tipos, mientras que `type` se puede declarar en una sola línea.
 
