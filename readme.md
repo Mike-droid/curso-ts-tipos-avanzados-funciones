@@ -250,3 +250,77 @@ export interface BaseModel {
 ## Proyecto
 
 ### CRUD
+
+Para llenar los datos usaremos [Faker.js](https://fakerjs.dev/) y la instalamos con `npm i @faker-js/faker -D`
+
+### Omit y Pick Type
+
+Podemos omitir ciertos atributos a la hora de crearlos, para que un humano no los llene, ya que son automáticos. Usamos `omit`
+
+```typescript
+export interface CreateProductDto extends Omit
+  < Product,
+    'id' |
+    'createdAt'|
+    'updatedAt' |
+    'category'
+  >
+{
+  categoryId: string;
+}
+```
+
+Y podemos hacer lo contrario, usando `pick`.
+
+```typescript
+type example = Pick<Product, 'color' | 'image'>;
+```
+
+### Partial y Required Type
+
+Podemos hacer que los campos sean opcionales con `Partial`
+
+```typescript
+export interface UpdateProductDto extends Partial<CreateProductDto> {}
+```
+
+Y podemos hacer que sean obligatorios con `Required`
+
+```typescript
+type example2 = Required<Product>
+```
+
+### Readonly Type
+
+Es tan simple como:
+
+```typescript
+export interface GetProductsDto extends Readonly<Partial<Product>>{}
+// Ahora todos los campos son de 'solo lectura'
+```
+
+### Acceder al tipado por indice
+
+Podemos acceder al tipado por indice 🤯🤯🤯
+
+```typescript
+const updateProduct = (id: Product['id']) => {}
+```
+
+Así, si cambian el tipado de 'id' de Product, no habrá problemas (depende de caso).
+
+### ReadonlyArray
+
+```typescript
+const numbers: ReadonlyArray<number> = [1, 2, 3, 4, 5];
+
+//! ya no puedo hacer esto
+/* numbers.push(6)
+numbers.pop()
+numbers.unshift(0)
+*/
+
+//* Esto sí
+numbers.filter(n => n > 3)
+
+```
